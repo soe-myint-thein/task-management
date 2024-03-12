@@ -65,6 +65,9 @@ class Payments extends CI_Controller {
 	}
 	
 	public function create(){
+		$data["payment_types"]= $this->Admin_model->grab_payment_types();
+		$data["task_names"]= $this->Admin_model->grab_done_task();
+
 	   $data["main_content"]="create_payments";
 	   $data["message"]="";
 		$this->load->view('administrator/admin_template',$data);
@@ -72,6 +75,10 @@ class Payments extends CI_Controller {
 	
 	public function edit($id){
 	   $data["message"]="";
+	   $data["payment_types"]= $this->Admin_model->grab_payment_types();
+		$data["task_names"]= $this->Admin_model->grab_done_task();
+
+	   $data["main_content"]="create_payments";
 	   $data['list']=$this->db->get_where("payments",array("id"=>$id))->row();
 	   $data["main_content"]="edit_payments";
 		$this->load->view('administrator/admin_template',$data);
@@ -79,8 +86,11 @@ class Payments extends CI_Controller {
 	
 	public function store(){
 	    
-	    $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-	    $this->form_validation->set_rules('answer', 'answer', 'trim|required');
+	    $this->form_validation->set_rules('task_id', 'task_id', 'trim|required');
+	    $this->form_validation->set_rules('amount', 'amount', 'trim|required');
+	    $this->form_validation->set_rules('payment_ref', 'payment_ref', 'trim|required');
+	    $this->form_validation->set_rules('payment_type', 'payment_type', 'trim|required');
+	    $this->form_validation->set_rules('date', 'date', 'trim|required');
 	   
             if ($this->form_validation->run() == FALSE) {
                 
@@ -90,8 +100,11 @@ class Payments extends CI_Controller {
              else {
                 
                 $data = array(
-                'question' => $this->input->post('question'),
-                'answer' => $this->input->post('answer')
+                'task_id' => $this->input->post('task_id'),
+                'amount' => $this->input->post('amount'),
+                'payment_ref' => $this->input->post('payment_ref'),
+                'payment_type' => $this->input->post('payment_type'),
+                'date' => $this->input->post('date')
                 );
 
             
@@ -109,26 +122,36 @@ class Payments extends CI_Controller {
             }
 
         }
-            
+            $data["payment_types"]= $this->Admin_model->grab_payment_types();
+		$data["task_names"]= $this->Admin_model->grab_done_task();
+
+	   $data["main_content"]="create_payments";
              $data["main_content"]="create_payments";
     		$this->load->view('administrator/admin_template',$data);
 	}
 	
 		public function update($id){
- 	 $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-	 $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-
-             if ($this->form_validation->run() == FALSE) {
+ 	 $this->form_validation->set_rules('task_id', 'task_id', 'trim|required');
+	    $this->form_validation->set_rules('amount', 'amount', 'trim|required');
+	    $this->form_validation->set_rules('payment_ref', 'payment_ref', 'trim|required');
+	    $this->form_validation->set_rules('payment_type', 'payment_type', 'trim|required');
+	    $this->form_validation->set_rules('date', 'date', 'trim|required');
+	   
+            if ($this->form_validation->run() == FALSE) {
                 
         	     $data["message"]="Please Fill the required Data";
            } 
             
-              else {
+             else {
                 
-               $data = array(
-                'question' => $this->input->post('question'),
-                'answer' => $this->input->post('answer')
+                $data = array(
+                'task_id' => $this->input->post('task_id'),
+                'amount' => $this->input->post('amount'),
+                'payment_ref' => $this->input->post('payment_ref'),
+                'payment_type' => $this->input->post('payment_type'),
+                'date' => $this->input->post('date')
                 );
+
 
 
             $this->db->where("id",$id);
@@ -148,6 +171,10 @@ class Payments extends CI_Controller {
         }
             
         $data["main_content"]="edit_payments";
+        $data["payment_types"]= $this->Admin_model->grab_payment_types();
+		$data["task_names"]= $this->Admin_model->grab_done_task();
+
+	   $data["main_content"]="create_payments";
         $data['list']=$this->db->get_where("payments",array("id"=>$id))->row();
     	$this->load->view('administrator/admin_template',$data);
 	}

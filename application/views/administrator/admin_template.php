@@ -45,9 +45,13 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="Administrator">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
+              
+                    <?php
+echo anchor("Administrator",'<i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span>','class="nav-link"');
+
+                ?>
+
             </li>
 
           
@@ -219,7 +223,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; MAS Education Center</span>
+                        <span>Copyright &copy; <?=date("Y")?></span>
                     </div>
                 </div>
             </footer>

@@ -15,15 +15,16 @@ class Assigned_tasks_model extends CI_Model{
 	
 // 	start 
 	
-    
-       function getone_student_uploads($id){
-        $this->db->select('student_uploads.*,courses.title as ctitle,students.name as stuname');
-        $this->db->join('courses', 'courses.id = student_uploads.course_id');
-        $this->db->join('students', 'students.id = student_uploads.student_id');
-        
-        $query=$this->db->get_where("student_uploads",array("student_uploads.content_id"=>$id));
+function grab_staff_lists()
+{
+        $this->db->order_by("user_type");
+        $query = $this->db->get_where("users",array("user_type"=>"Staff"));
+       
         return $query;
-    }
+}
+
+    
+     
 
 } 
 

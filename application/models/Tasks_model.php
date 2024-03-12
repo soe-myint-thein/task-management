@@ -15,14 +15,9 @@ class Tasks_model extends CI_Model{
 // 	start 
 	
     
-       function getone_student_uploads($id){
-        $this->db->select('student_uploads.*,courses.title as ctitle,students.name as stuname');
-        $this->db->join('courses', 'courses.id = student_uploads.course_id');
-        $this->db->join('students', 'students.id = student_uploads.student_id');
-        
-        $query=$this->db->get_where("student_uploads",array("student_uploads.content_id"=>$id));
-        return $query;
-    }
+
+
+  
 
 } 
 

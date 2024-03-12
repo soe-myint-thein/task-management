@@ -92,15 +92,15 @@ class Administrator extends CI_Controller {
         $password=md5($this->input->post("password"));
         $pcname=gethostbyaddr($this->input->ip_address());
 
-        $query=$this->db->query("SELECT users.*,users.id as staff_id,user_roles.* FROM users JOIN user_roles ON users.user_role=user_roles.id  where email='$username' AND password='$password'");
-/*      $query=$this->db->query("SELECT user.*,userrole.*,staff.id as staff_id,staff.department FROM user JOIN userrole ON user.user_role=userrole.role JOIN staff ON user.username=staff.username where user.username='$username' AND user.password='$password'");
+        $query=$this->db->query("SELECT users.*,users.id as user_id,user_roles.* FROM users JOIN user_roles ON users.user_role=user_roles.id  where email='$username' AND password='$password'");
+/*      $query=$this->db->query("SELECT user.*,userrole.*,user.id as user_id,user.department FROM user JOIN userrole ON user.user_role=userrole.role JOIN user ON user.username=user.username where user.username='$username' AND user.password='$password'");
 */      
                         
         if($query->num_rows()>=1)
         {
             
             $r=$query->row();
-            set_cookie('staff_id',$r->staff_id,time() +3600); 
+            set_cookie('user_id',$r->user_id,time() +3600); 
             set_cookie('name',$r->name,time() +3600); 
             set_cookie('email',$r->email,time() +3600); 
             set_cookie('admin_cookie',$username,time() +3600); 

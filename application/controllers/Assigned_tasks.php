@@ -60,38 +60,64 @@ class Assigned_tasks extends CI_Controller {
 	{
 
 	    $data["main_content"]="assigned_tasks";
-	    $data["lists"]= $this->Assigned_tasks_model->getall();;
+	    $data["lists"]= $this->Assigned_tasks_model->getall();
 		$this->load->view('administrator/admin_template',$data);
 	}
 	
 	public function create(){
 	   $data["main_content"]="create_assigned_tasks";
 	   $data["message"]="";
+	   $data["staffs"]= $this->Assigned_tasks_model->grab_staff_lists();
+		$data["task_names"]= $this->Admin_model->grab_undone_task();
+
 		$this->load->view('administrator/admin_template',$data);
 	}
 	
 	public function edit($id){
 	   $data["message"]="";
 	   $data['list']=$this->db->get_where("assigned_tasks",array("id"=>$id))->row();
+	   $data["staffs"]= $this->Assigned_tasks_model->grab_staff_lists();
+		$data["task_names"]= $this->Admin_model->grab_undone_task();
+
 	   $data["main_content"]="edit_assigned_tasks";
 		$this->load->view('administrator/admin_template',$data);
 	}
 	
 	public function store(){
 	    
-	    $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-	    $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-	   
+	    $this->form_validation->set_rules('task_id', 'task_id', 'trim|required');
+	    $this->form_validation->set_rules('task_desc', 'task_desc', 'trim|required');
+	    $this->form_validation->set_rules('assign_to', 'assign_to', 'trim|required');
+	 
             if ($this->form_validation->run() == FALSE) {
                 
         	     $data["message"]="Please Fill the required Data";
            } 
             
              else {
+
+
+
+             	if(($_FILES['task_docs']['name'])!=""){
+
+	        $this->admin_model->file_upload("task_docs",'task_docs');  
+	        $task_docs =str_replace(" ","_",$_FILES['task_docs']['name']);
+       
+	       	 }
+	      	else            
+		      {
+		        $task_docs="";
+		      }	
+
+		      $assign_to=implode(",",$this->input->post('assign_to'));
                 
                 $data = array(
-                'question' => $this->input->post('question'),
-                'answer' => $this->input->post('answer')
+                'task_id' => $this->input->post('task_id'),
+                'task_desc' => $this->input->post('task_desc'),
+                'is_supervisor' => $this->input->post('is_supervisor'),
+                'task_docs' => $task_docs,
+                'assign_to' => $assign_to
+
                 );
 
             
@@ -109,27 +135,49 @@ class Assigned_tasks extends CI_Controller {
             }
 
         }
-            
+            	   $data["staffs"]= $this->Assigned_tasks_model->grab_staff_lists();
+		$data["task_names"]= $this->Admin_model->grab_undone_task();
+
+
              $data["main_content"]="create_assigned_tasks";
     		$this->load->view('administrator/admin_template',$data);
 	}
 	
 		public function update($id){
- 	 $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-	 $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-
-             if ($this->form_validation->run() == FALSE) {
+ 		 $this->form_validation->set_rules('task_id', 'task_id', 'trim|required');
+	    $this->form_validation->set_rules('task_desc', 'task_desc', 'trim|required');
+	    $this->form_validation->set_rules('assign_to', 'assign_to', 'trim|required');
+	 
+            if ($this->form_validation->run() == FALSE) {
                 
         	     $data["message"]="Please Fill the required Data";
            } 
             
-              else {
-                
-               $data = array(
-                'question' => $this->input->post('question'),
-                'answer' => $this->input->post('answer')
-                );
+             else {
 
+
+
+             	if(($_FILES['task_docs']['name'])!=""){
+
+	        $this->admin_model->file_upload("task_docs",'task_docs');  
+	        $task_docs =str_replace(" ","_",$_FILES['task_docs']['name']);
+       
+	       	 }
+	      	else            
+		      {
+		        $task_docs=$this->input->post("old_files");
+		      }	
+
+		      $assign_to=implode(",",$this->input->post('assign_to'));
+                
+                $data = array(
+                'task_id' => $this->input->post('task_id'),
+                'task_desc' => $this->input->post('task_desc'),
+                'is_supervisor' => $this->input->post('is_supervisor'),
+                'task_docs' => $task_docs,
+                'assign_to' => $assign_to
+
+                );
 
             $this->db->where("id",$id);
             $qry=$this->db->update("assigned_tasks",$data);	
@@ -148,6 +196,10 @@ class Assigned_tasks extends CI_Controller {
         }
             
         $data["main_content"]="edit_assigned_tasks";
+        $data["staffs"]= $this->Assigned_tasks_model->grab_staff_lists();
+		$data["task_names"]= $this->Admin_model->grab_undone_task();
+
+
         $data['list']=$this->db->get_where("assigned_tasks",array("id"=>$id))->row();
     	$this->load->view('administrator/admin_template',$data);
 	}

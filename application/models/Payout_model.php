@@ -5,7 +5,7 @@ class Payout_model extends CI_Model{
 
 
 	function getall(){
-	    $this->db->select('payouts.*,tasks.task_name as task_name');
+	    $this->db->select('payouts.*,tasks.task_name as task_name,users.name as received_by');
         $this->db->join('tasks', 'tasks.id = payouts.assign_task_id');
         $this->db->join('users', 'users.id = payouts.received_by');
 

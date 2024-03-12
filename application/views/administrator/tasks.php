@@ -38,7 +38,7 @@
         <td><?=$list->task_name?></td>
         <td><?=$list->description?></td>
         <td><?=$list->requested_by?></td>
-        <td><?=$list->task_docs?></td>
+        <td><?php if($list->task_docs !="") {echo anchor(base_url()."uploads/task_docs/".$list->task_docs,'<i class="fa fa-download"></i> '.$list->task_docs,"target='_blank'");}?></td>
         <td><?=$list->task_type?></td>
         <td><?=$list->payment_status?></td>
         <td><?=$list->task_status?></td>

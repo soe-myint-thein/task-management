@@ -27,47 +27,129 @@ class Admin_model extends CI_Model{
 
 	
 
-	
-	function getappointmentNoti()
-	{
-	    $query=$this->db->query("SELECT * FROM tbl_appointment WHERE date=CURDATE()");
-        return $query->num_rows();
-	}
-	
-	function getunreadtaskreport()
-	{
-	    
-	    $staff_id=get_cookie('id');
-	    $query=$this->db->query("SELECT * FROM tbl_task_report WHERE !FIND_IN_SET($staff_id,read_staff) AND department !='Account'");
-        return $query->num_rows();
-	}
-	
-	function getunreadpersonalreport($department)
-	{
-	    
-	    $staff_id=get_cookie('id');
-	    $query=$this->db->query("SELECT * FROM tbl_personal_daily_report WHERE !FIND_IN_SET($staff_id,read_staff) AND department='$department'");
-        return $query->num_rows();
-     
-	}
-	
-	
-	function getunreadeachtaskreport($taskid)
-	{
-	    
-	    $staff_id=get_cookie('id');
-	    $query=$this->db->query("SELECT * FROM tbl_task_report WHERE !FIND_IN_SET($staff_id,read_staff) AND task_id='$taskid'");
-        return $query->num_rows();
-	}
-	
-	
-	function getunreadeachreport($projectid)
-	{
-	    
-	    $staff_id=get_cookie('id');
-	    $query=$this->db->query("SELECT * FROM tbl_report WHERE !FIND_IN_SET($staff_id,read_staff)  AND project_id='$projectid'");
-        return $query->num_rows();
-	}
+	  
+function grab_payment_statuss()
+{
+        $this->db->group_by("payment_status");
+        $this->db->order_by("payment_status");
+        $query = $this->db->get("tasks");
+        if($query->num_rows()<=0)
+        {
+            $tags['']="..Select..";
+        }
+        $tags['']="..select..";
+        foreach($query->result() as $row):
+            $tags[$row->payment_status]=$row->payment_status;
+        endforeach;
+        return $tags;
+}
+
+
+function grab_payment_types(){
+ 		/*$this->db->group_by("payment_type");
+        $this->db->order_by("payment_type");
+        $query = $this->db->get("payments");
+        if($query->num_rows()<=0)
+        {
+            $tags['']="..Select..";
+        }
+        $tags['']="..select..";
+        foreach($query->result() as $row):
+            $tags[$row->payment_type]=$row->payment_type;
+        endforeach;*/
+        $tags["cash"]="cash";
+        $tags["bank"]="bank";
+        return $tags;	
+}
+
+
+function grab_task_types()
+{
+        $this->db->distinct("task_type");
+        $this->db->order_by("task_type");
+        $query = $this->db->get("tasks");
+        if($query->num_rows()<=0)
+        {
+            $tags['']="..Select..";
+        }
+        $tags['']="..select..";
+        foreach($query->result() as $row):
+            $tags[$row->task_type]=$row->task_type;
+        endforeach;
+        return $tags;
+}
+
+
+
+
+function grab_task_statuss()
+{
+        $this->db->group_by("task_status");
+        $this->db->order_by("task_status");
+        $query = $this->db->get("tasks");
+        if($query->num_rows()<=0)
+        {
+            $tags['']="..Select..";
+        }
+        $tags['']="..select..";
+        foreach($query->result() as $row):
+            $tags[$row->task_status]=$row->task_status;
+        endforeach;
+        return $tags;
+}
+
+
+
+function grab_done_task()
+{
+        $this->db->group_by("id");
+        $this->db->order_by("id");
+        $query = $this->db->get_where("tasks",array("task_status"=>"done"));
+        if($query->num_rows()<=0)
+        {
+            $tags['']="..Select..";
+        }
+        $tags['']="..select..";
+        foreach($query->result() as $row):
+            $tags[$row->id]=$row->task_name;
+        endforeach;
+        return $tags;
+}
+
+function grab_undone_task()
+{
+        $this->db->group_by("id");
+        $this->db->order_by("id");
+        $query = $this->db->get_where("tasks",array("task_status !="=>"done"));
+        if($query->num_rows()<=0)
+        {
+            $tags['']="..Select..";
+        }
+        $tags['']="..select..";
+        foreach($query->result() as $row):
+            $tags[$row->id]=$row->task_name;
+        endforeach;
+        return $tags;
+}
+
+
+
+function grab_assigned_task()
+{
+        $this->db->select("tasks.task_name,assigned_tasks.*");
+       
+        $this->db->join("tasks","assigned_tasks.task_id=tasks.id");
+        $query = $this->db->get_where("assigned_tasks",array("assigned_tasks.task_status"=>"done"));
+        if($query->num_rows()<=0)
+        {
+            $tags['']="..Select..";
+        }
+        $tags['']="..select..";
+        foreach($query->result() as $row):
+            $tags[$row->id]=$row->task_name;
+        endforeach;
+        return $tags;
+}
 
 function get_submenu($id)
 {
@@ -79,42 +161,7 @@ $query=$this->db->where_in('id', $submenu)->get("submenu");
 return $query;
 }
 	
-	function getunreadreport()
-	{
-	    $staff_id=get_cookie('id');
-	    $query=$this->db->query("SELECT * FROM tbl_report WHERE !FIND_IN_SET($staff_id,read_staff)");
-        return $query->num_rows();
-	}
-	
-	
-	function getunreadsurvey()
-	{
-	    $staff_id=get_cookie('id');
-	    $query=$this->db->query("SELECT * FROM tbl_survey WHERE !FIND_IN_SET($staff_id,read_staff)");
-        return $query->num_rows();
-	}
-	
-	function getunreaddailyreport()
-	{
-	    $staff_id=get_cookie('id');
-	    $query=$this->db->query("SELECT * FROM tbl_personal_daily_report WHERE !FIND_IN_SET($staff_id,read_staff)");
-        return $query->num_rows();
-	}
-	
-  public function updateStatusforNotice($notification_id, $staff_id) {
-        $this->db->where('notification_id', $notification_id);
-        $this->db->where('staff_id', $staff_id);
-        $q = $this->db->get('read_notification');
-        if ($q->num_rows() > 0) {
-            return true;
-        } else {
-            $data = array(
-                'notification_id' => $notification_id,
-                'staff_id' => $staff_id
-            );
-            $this->db->insert('read_notification', $data);
-        }
-    }
+
     
     
 function grab_userrole()
@@ -150,6 +197,52 @@ return $check;
 	/*image upload and resize*/
 
 	function img_upload($files,$folder)
+		{
+			
+		ini_set('upload_max_filesize','30M');
+		ini_set('post_max_size','30M');
+
+			if(!$files)
+			{
+				return false;
+			}
+			
+			else{					
+				$path='./uploads/'.$folder.'/';
+				
+				//$config['file_ext']	=
+				$config['overwrite']=TRUE;
+			 	$config['upload_path']=$path;	
+			 $config['remove_spaces'] = TRUE;	
+
+			   	$config['allowed_types'] = 'gif|jpg|png|jpeg|JPG|PNG|JPEG|GIF|xlsx|pdf|docx|doc|pptx';				   			
+			
+			 
+				
+					$this->load->library('upload', $config);
+					if(!$this->upload->do_upload($files))
+					{
+												
+						echo $this->upload->display_errors();
+						exit;
+						
+					}
+
+					else
+					{							
+						$upload_data = $this->upload->data(); //Returns array of containing all of the data related to the file you uploaded.
+                    $file_name = $upload_data['file_name'];
+						 return $file_name;
+
+					}
+				}
+		}
+		
+
+
+		/*Files upload and resize*/
+
+	function file_upload($files,$folder)
 		{
 			
 		ini_set('upload_max_filesize','30M');

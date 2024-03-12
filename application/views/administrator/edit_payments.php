@@ -3,14 +3,14 @@
         <div class="row">
             <div class="col-lg-12 margin-tb">
                 <div class="pull-left mb-2">
-                    <h2>Edit Task</h2>
+                    <h2>Edit Payment</h2>
                     <h3><?=$message?></h3>
                 </div>
                
             </div>
         </div>
         
-        <form action='<?php echo site_url("Tasks/update/$list->id")?>' method="POST" enctype="multipart/form-data">
+        <form action='<?php echo site_url("Payments/update/$list->id")?>' method="POST" enctype="multipart/form-data">
             <?=form_hidden("old_files",$list->task_docs)?>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">

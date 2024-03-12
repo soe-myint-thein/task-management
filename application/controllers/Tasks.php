@@ -59,38 +59,70 @@ class Tasks extends CI_Controller {
 	public function index()
 	{
 	    $data["main_content"]="tasks";
-	    $data["lists"]= $this->Tasks_model->getall();;
+	    $data["lists"]= $this->Tasks_model->getall();
 		$this->load->view('administrator/admin_template',$data);
 	}
 	
 	public function create(){
 	   $data["main_content"]="create_tasks";
-	   $data["message"]="";
+
+	  	$data["message"]="";
 		$this->load->view('administrator/admin_template',$data);
 	}
+
+
 	
 	public function edit($id){
 	   $data["message"]="";
+	    $data["payment_statuss"]= $this->Admin_model->grab_payment_statuss();
+
+	    $data["task_types"]= $this->Admin_model->grab_task_types();
+
+	    $data["task_statuss"]= $this->Admin_model->grab_task_statuss();
+
 	   $data['list']=$this->db->get_where("tasks",array("id"=>$id))->row();
+
 	   $data["main_content"]="edit_tasks";
 		$this->load->view('administrator/admin_template',$data);
 	}
 	
+
+
 	public function store(){
 	    
-	    $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-	    $this->form_validation->set_rules('answer', 'answer', 'trim|required');
+	    $this->form_validation->set_rules('task_name', 'task_name', 'trim|required');
+	    $this->form_validation->set_rules('description', 'description', 'trim|required');
 	   
             if ($this->form_validation->run() == FALSE) {
                 
         	     $data["message"]="Please Fill the required Data";
            } 
+
+
+
             
              else {
-                
+
+             	if(($_FILES['task_docs']['name'])!=""){
+
+	        $this->admin_model->file_upload("task_docs",'task_docs');  
+	        $task_docs =str_replace(" ","_",$_FILES['task_docs']['name']);
+       
+	       	 }
+	      	else            
+		      {
+		        $task_docs="";
+		      }	
+
+                $requested_by=get_cookie("user_id");
                 $data = array(
-                'question' => $this->input->post('question'),
-                'answer' => $this->input->post('answer')
+                'task_name' => $this->input->post('task_name'),
+                'description' => $this->input->post('description'),
+                'task_docs' => $this->input->post('task_docs'),
+                'requested_by' => $requested_by,
+                'date' => date("Y-m-d",strtotime($this->input->post('date')))
+
+
                 );
 
             
@@ -107,29 +139,52 @@ class Tasks extends CI_Controller {
 
             }
 
-        }
+        
+    }
             
              $data["main_content"]="create_tasks";
     		$this->load->view('administrator/admin_template',$data);
 	}
+
+
 	
 		public function update($id){
- 	 $this->form_validation->set_rules('answer', 'answer', 'trim|required');
-	 $this->form_validation->set_rules('answer', 'answer', 'trim|required');
 
-             if ($this->form_validation->run() == FALSE) {
+ 	   $this->form_validation->set_rules('task_name', 'task_name', 'trim|required');
+	    $this->form_validation->set_rules('description', 'description', 'trim|required');
+	   
+            if ($this->form_validation->run() == FALSE) {
                 
         	     $data["message"]="Please Fill the required Data";
            } 
+
+
+
             
-              else {
+             else {
+
+             	if(($_FILES['task_docs']['name'])!=""){
+
+	        $this->admin_model->file_upload("task_docs",'task_docs');  
+	        $task_docs =str_replace(" ","_",$_FILES['task_docs']['name']);
+       
+	       	 }
+	      	else            
+		      {
+		        $task_docs=$this->input->post("old_files");
+		      }	
+
                 
-               $data = array(
-                'question' => $this->input->post('question'),
-                'answer' => $this->input->post('answer')
+                 $requested_by=get_cookie("user_id");
+                $data = array(
+                'task_name' => $this->input->post('task_name'),
+                'description' => $this->input->post('description'),
+                'task_docs' => $task_docs,
+                'requested_by' => $requested_by,
+                'date' => date("Y-m-d",strtotime($this->input->post('date')))
+
+
                 );
-
-
             $this->db->where("id",$id);
             $qry=$this->db->update("tasks",$data);	
             
@@ -147,6 +202,12 @@ class Tasks extends CI_Controller {
         }
             
         $data["main_content"]="edit_tasks";
+         $data["payment_statuss"]= $this->Admin_model->grab_payment_statuss();
+
+	    $data["task_types"]= $this->Admin_model->grab_task_types();
+
+	    $data["task_statuss"]= $this->Admin_model->grab_task_statuss();
+
         $data['list']=$this->db->get_where("tasks",array("id"=>$id))->row();
     	$this->load->view('administrator/admin_template',$data);
 	}

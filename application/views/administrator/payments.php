@@ -19,7 +19,7 @@
         <th>#</th>
         <th>Task Name</th>
         <th>amount</th>
-        <th>Tpayment_ref</th>
+        <th>Payment_ref</th>
         <th>Payment Type</th>
         <th>Date</th>
        <th>Action</th>
